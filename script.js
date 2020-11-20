@@ -3,6 +3,7 @@ let playershand = [];
 let computershand = [];
 let totalplayer = 0;
 let totalcomputer = 0;
+let computerInterval;
 
 
 //take card random card from deck, push card in players deck and remove it from the main deck. Create list item for every card that's pulled
@@ -26,12 +27,16 @@ pullCardcomputer = () => {
     deck.splice(i, 1);
     node.appendChild(textnode);
     document.getElementById("computercards").appendChild(node);
+
+
 }
 
 //compare wining and losing conditions, change message inner html accordingly
 winConditions = () => {
    totalplayer = playershand.reduce((a,b) => a + b, 0);
    totalcomputer = computershand.reduce((a,b) => a + b, 0);
+   document.getElementById("totalcomputer").innerHTML = totalcomputer;
+   document.getElementById("totalplayer").innerHTML = totalplayer;
     if(totalplayer === 21 && totalcomputer < 21){
         document.getElementById("message").innerHTML= "You win!";
     }
@@ -50,27 +55,28 @@ winConditions = () => {
     else{
         document.getElementById("message").innerHTML= "Take another card";
     }
+
 }
 
 document.getElementById("test").addEventListener("click", function(){
     pullCardplayer();
-    pullCardcomputer ();
-    winConditions();
-    document.getElementById("totalplayer").innerHTML = totalplayer;
+    setTimeout(combineWinPullCard, 400);
+});
+
+//Combined pullcard function and winconditions to put into interval, clear interval when conditions are met.
+combineWinPullCard = () =>{
+    pullCardcomputer();
     document.getElementById("totalcomputer").innerHTML = totalcomputer;
-    console.log(deck);
-    console.log(playershand);
-});
-
-
-//let computer pull cards until win or bust
-document.getElementById("stop").addEventListener("click", function(){
-    do{
-        pullCardcomputer();
-        winConditions();
+    winConditions();
+    if (totalcomputer > 21){
+        clearInterval(computerInterval);
         document.getElementById("totalcomputer").innerHTML = totalcomputer;
-        if(totalcomputer > 21){
-            break;
-        }
-    }while(totalcomputer < 21);
+    }
+}
+
+//let computer pull cards until win or bust with use of an interval
+document.getElementById("stop").addEventListener("click", function(){
+       computerInterval = setInterval(combineWinPullCard, 500);
 });
+
+
