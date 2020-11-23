@@ -1,17 +1,38 @@
-let deck = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10];
+let deck = [];
+let suits = ["Diamonds", "Hearts", "Spades", "Clubs"];
+let values = [2, 3, 4, 5, 6, 7, 8, 9, 10, "J", "Q", "K", "A"];
 let playershand = [];
 let computershand = [];
 let totalplayer = 0;
 let totalcomputer = 0;
 let computerInterval;
 
+//create deck from 2 arrays with all the suits, give a higher weight to, joker, king, queen and ace.
+for(i = 0; i < values.length; i++){
+    for(a = 0; a < suits.length; a++){
+        let weight;
+        if(values[i] === "J" || values[i] === "Q" || values[i] === "K"){
+            weight = 10;
+        }
+        else if(values[i] === "A"){
+            weight = 11;
+        }
+        else{
+            weight = values[i];
+        }
+        let card = {Suit: suits[a], Value: values[i], Weight: weight};
+        deck.push(card);
+    }
+}
+
+console.log(deck);
 
 //take card random card from deck, push card in players deck and remove it from the main deck. Create list item for every card that's pulled
 pullCardplayer = () => {
     let i = Math.floor(Math.random() * deck.length);
     let randomcard = deck[i];
     let node = document.createElement("LI");
-    let textnode = document.createTextNode(randomcard);
+    let textnode = document.createTextNode(deck[i].weight);
     playershand.push(randomcard);
     deck.splice(i, 1);
     node.appendChild(textnode);
@@ -60,17 +81,17 @@ winConditions = () => {
 
 document.getElementById("test").addEventListener("click", function(){
     pullCardplayer();
+    winConditions();
     setTimeout(combineWinPullCard, 400);
+    console.log(playershand);
 });
 
 //Combined pullcard function and winconditions to put into interval, clear interval when conditions are met.
 combineWinPullCard = () =>{
     pullCardcomputer();
-    document.getElementById("totalcomputer").innerHTML = totalcomputer;
     winConditions();
     if (totalcomputer > 21){
         clearInterval(computerInterval);
-        document.getElementById("totalcomputer").innerHTML = totalcomputer;
     }
 }
 
